@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { getStrapiImageUrl } from "@/utils/getStrapiImageUrl";
 interface Button {
@@ -157,13 +158,13 @@ const UpcomingEvents = ({ upcomingEventsData }: UpcomingEventsProps) => {
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <a
+                <Link
                   href="/news"
                   className="flex items-center gap-3 transition-all duration-300 rounded-full bg-white/10 px-8 py-3.5 text-white font-bold border border-white/20 backdrop-blur-sm shadow-xl hover:bg-white hover:text-orange-500 lg:px-10 lg:py-4"
                 >
                   <span>View All News</span>
                   <span className="text-xl">→</span>
-                </a>
+                </Link>
               </motion.div>
             </motion.div>
           </div>
