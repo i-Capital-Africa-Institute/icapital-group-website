@@ -3,52 +3,18 @@ const nextConfig = {
   // Optimize server components
   serverExternalPackages: ['@apollo/client'],
 
+  experimental: {
+    optimizePackageImports: ['react-icons', 'framer-motion', 'react-icons/fa'],
+  },
+
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
     });
 
-    // Better chunk splitting for performance
-    config.optimization = {
-      ...config.optimization,
-      splitChunks: {
-        chunks: 'all',
-        maxInitialRequests: 25,
-        minSize: 20000,
-        cacheGroups: {
-          // Separate large animation library
-          framerMotion: {
-            test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
-            name: 'framer-motion',
-            chunks: 'all',
-            priority: 30,
-          },
-          // Separate Swiper
-          swiper: {
-            test: /[\\/]node_modules[\\/]swiper[\\/]/,
-            name: 'swiper',
-            chunks: 'all',
-            priority: 25,
-          },
-          // Apollo client
-          apollo: {
-            test: /[\\/]node_modules[\\/]@apollo[\\/]/,
-            name: 'apollo',
-            chunks: 'all',
-            priority: 20,
-          },
-          // General vendor
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-            priority: 10,
-          },
-        },
-      },
-    };
-
+    // Do not override splitChunks — fixed chunk names (e.g. "vendors")
+    // cause CSS to be requested as <script> and fail MIME checks.
     return config;
   },
 
@@ -89,7 +55,12 @@ const nextConfig = {
     return [
       {
         source: "/knowledge-sharing/east-africa-finance-summit",
-        destination: "/knowledge-sharing/east-africa-finance-summit/upcoming",
+        destination: "/eafs",
+        permanent: true,
+      },
+      {
+        source: "/knowledge-sharing/east-africa-finance-summit/:path*",
+        destination: "/eafs/:path*",
         permanent: true,
       },
     ];

@@ -91,7 +91,7 @@ const UpcomingEvents = ({ upcomingEventsData }: UpcomingEventsProps) => {
               variants={tagVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               className="inline-block rounded-full bg-white/20 px-5 py-1.5 backdrop-blur-md border border-white/10"
             >
               <span className="text-sm font-semibold tracking-wide text-white uppercase">
@@ -104,7 +104,7 @@ const UpcomingEvents = ({ upcomingEventsData }: UpcomingEventsProps) => {
               variants={titleVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               className="mt-6 text-4xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl"
             >
               {eventData.title}
@@ -115,7 +115,7 @@ const UpcomingEvents = ({ upcomingEventsData }: UpcomingEventsProps) => {
               variants={descriptionVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               className="mt-6 text-lg leading-relaxed text-white/90 md:text-xl lg:max-w-2xl text-justify"
             >
               {eventData.description}
@@ -126,7 +126,7 @@ const UpcomingEvents = ({ upcomingEventsData }: UpcomingEventsProps) => {
               variants={buttonContainerVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               className="mt-10 flex flex-wrap items-center gap-6"
             >
               {eventData.buttons.map((button: Button, index: number) => (
@@ -182,6 +182,7 @@ const UpcomingEvents = ({ upcomingEventsData }: UpcomingEventsProps) => {
                   src={getStrapiImageUrl(eventData.image.url)}
                   alt={eventData.title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60" />

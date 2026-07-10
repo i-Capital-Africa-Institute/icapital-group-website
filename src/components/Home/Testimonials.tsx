@@ -37,8 +37,8 @@ const Testimonials = ({ testimonialsData }: TestimonialsProps) => {
   return (
     <section className="relative overflow-hidden bg-[#FAFBFF] py-20 md:py-32">
       {/* Background Elements */}
-      <div className="absolute -left-20 top-0 h-[500px] w-[500px] rounded-full bg-orange-500/5 blur-[120px] animate-pulse" />
-      <div className="absolute -right-20 bottom-0 h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-[120px] animate-pulse" />
+      <div className="absolute -left-20 top-0 h-[500px] w-[500px] rounded-full bg-orange-500/5 blur-[60px] md:blur-[120px]" />
+      <div className="absolute -right-20 bottom-0 h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-[60px] md:blur-[120px]" />
 
       <div className="container relative mx-auto px-6">
         {/* Header */}
@@ -129,6 +129,7 @@ const Testimonials = ({ testimonialsData }: TestimonialsProps) => {
                             src={imageUrl}
                             alt={testimonial.name}
                             fill
+                            sizes="64px"
                             className="object-cover transition-transform duration-700 group-hover:scale-110"
                           />
                         ) : (

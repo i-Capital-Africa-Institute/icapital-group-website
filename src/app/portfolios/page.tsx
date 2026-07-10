@@ -9,9 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getStrapiImageUrl } from "@/utils/getStrapiImageUrl";
 
-// Enable static generation with revalidation
-export const dynamic = 'force-dynamic';
-export const revalidate = 1800; // Revalidate every 30 minutes
+export const revalidate = 1800;
 
 export const metadata: Metadata = {
   title: "Portfolios | i-Capital Africa Institute",
@@ -65,6 +63,7 @@ export default async function PortfoliosPage() {
                       alt={project.title}
                       width={280}
                       height={160}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>

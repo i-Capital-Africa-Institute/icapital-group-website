@@ -103,7 +103,7 @@ const Hero = ({ heroData }: HeroProps) => {
                 alt={slide.title}
                 fill
                 priority={index === 0}
-                quality={90}
+                quality={index === 0 ? 85 : 75}
                 sizes="100vw"
                 style={{ objectFit: "cover" }}
                 className="absolute inset-0 z-0 scale-110"
@@ -130,7 +130,7 @@ const Hero = ({ heroData }: HeroProps) => {
                       variants={badgeVariants}
                       initial="hidden"
                       whileInView="visible"
-                      viewport={{ once: false, amount: 0.3 }}
+                      viewport={{ once: true, amount: 0.3 }}
                       className="inline-block rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-6 py-2 text-sm font-bold tracking-widest uppercase text-orange-400"
                     >
                       {slide.bagde}
@@ -142,7 +142,7 @@ const Hero = ({ heroData }: HeroProps) => {
                     variants={titleVariants}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.3 }}
                     className="text-5xl font-extrabold leading-[1.1] tracking-tighter sm:text-7xl lg:text-8xl lg:leading-[1.05]"
                   >
                     {slide.title.split(" ").map((word: string, i: number) => (
@@ -165,7 +165,7 @@ const Hero = ({ heroData }: HeroProps) => {
                     variants={descriptionVariants}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.3 }}
                     className="max-w-2xl text-xl leading-relaxed text-blue-50/80 lg:text-2xl font-medium"
                   >
                     {getDescriptionText(slide.description)}
@@ -176,7 +176,7 @@ const Hero = ({ heroData }: HeroProps) => {
                     variants={buttonVariants}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.3 }}
                     className="flex flex-col items-start gap-4 pt-4 md:flex-row md:items-center"
                   >
                     {slide.buttonText && (

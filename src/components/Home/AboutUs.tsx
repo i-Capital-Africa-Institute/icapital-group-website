@@ -84,15 +84,13 @@ const AboutUs = ({ aboutUsData }: AboutUsProps) => {
   const itemVariants = {
     hidden: {
       opacity: 0,
-      y: 30,
-      filter: "blur(8px)",
+      y: 24,
     },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: {
-        duration: 0.6,
+        duration: 0.5,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -101,15 +99,13 @@ const AboutUs = ({ aboutUsData }: AboutUsProps) => {
   const imageVariants = {
     hidden: {
       opacity: 0,
-      scale: 0.95,
-      filter: "blur(8px)",
+      scale: 0.98,
     },
     visible: {
       opacity: 1,
       scale: 1,
-      filter: "blur(0px)",
       transition: {
-        duration: 0.8,
+        duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -148,7 +144,7 @@ const AboutUs = ({ aboutUsData }: AboutUsProps) => {
         initial="hidden"
         animate={controls}
         whileInView="visible"
-        viewport={{ once: false, margin: "-100px" }}
+        viewport={{ once: true, margin: "-100px" }}
         className="container relative z-10 mx-auto flex flex-col items-center gap-16 lg:flex-row"
       >
         {/* Image Section */}
@@ -162,6 +158,7 @@ const AboutUs = ({ aboutUsData }: AboutUsProps) => {
               src={image}
               alt={tagTitle}
               fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
             {/* Overlay Gradient for depth */}
@@ -177,7 +174,7 @@ const AboutUs = ({ aboutUsData }: AboutUsProps) => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.4 }}
           >
             <Tag
@@ -225,17 +222,10 @@ const AboutUs = ({ aboutUsData }: AboutUsProps) => {
                 <motion.span
                   animate={{
                     rotate: showMore ? 180 : 0,
-                    y: !showMore ? [0, 4, 0] : 0,
                   }}
                   transition={{
-                    duration: 0.4,
+                    duration: 0.3,
                     ease: "easeInOut",
-                    y: {
-                      duration: 1.5,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      ease: "easeInOut",
-                    },
                   }}
                 >
                   <FaArrowDown className="text-xl" />

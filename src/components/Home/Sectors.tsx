@@ -77,19 +77,13 @@ const Sectors = ({ sectorsData }: SectorsProps) => {
   const cardVariants = {
     hidden: {
       opacity: 0,
-      y: 60,
-      scale: 0.95,
-      rotateX: 10,
-      filter: "blur(8px)",
+      y: 32,
     },
     visible: {
       opacity: 1,
       y: 0,
-      scale: 1,
-      rotateX: 0,
-      filter: "blur(0px)",
       transition: {
-        duration: 0.6,
+        duration: 0.45,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -113,17 +107,16 @@ const Sectors = ({ sectorsData }: SectorsProps) => {
       key={pathname}
       className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-blue-50/30 to-slate-50 px-4 py-16 sm:px-6 md:px-8 lg:px-12 md:py-20 lg:py-28"
     >
-      {/* Animated Decorative Background Blobs */}
-      <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-blue-400/8 blur-[130px] animate-pulse" />
-      <div className="absolute -right-32 top-1/2 h-96 w-96 rounded-full bg-orange-400/8 blur-[130px] animate-pulse" />
-      <div className="absolute left-1/2 -bottom-32 h-96 w-96 rounded-full bg-purple-400/8 blur-[130px] animate-pulse" />
+      {/* Decorative Background Blobs — static, no pulse (avoids scroll paint thrashing) */}
+      <div className="pointer-events-none absolute -left-32 top-20 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl md:h-96 md:w-96" />
+      <div className="pointer-events-none absolute -right-32 top-1/2 h-72 w-72 rounded-full bg-orange-400/10 blur-3xl md:h-96 md:w-96" />
 
       <div className="container relative z-10 mx-auto max-w-7xl">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "-100px" }}
+          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="mb-12 text-center sm:mb-16 md:mb-20"
         >
@@ -131,7 +124,7 @@ const Sectors = ({ sectorsData }: SectorsProps) => {
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="flex justify-center mb-6 sm:mb-8"
           >
@@ -146,7 +139,7 @@ const Sectors = ({ sectorsData }: SectorsProps) => {
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.15 }}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 mb-4 sm:mb-6 leading-tight"
           >
@@ -159,7 +152,7 @@ const Sectors = ({ sectorsData }: SectorsProps) => {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed font-medium max-w-3xl mx-auto px-4"
           >
@@ -172,7 +165,7 @@ const Sectors = ({ sectorsData }: SectorsProps) => {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, margin: "-50px" }}
+          viewport={{ once: true, margin: "-50px" }}
           className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
         >
           {(sectorsSection.cards || []).map((card: Card, index: number) => {
@@ -267,7 +260,7 @@ const Sectors = ({ sectorsData }: SectorsProps) => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="mt-16 sm:mt-20 md:mt-24 text-center"
         >

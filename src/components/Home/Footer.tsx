@@ -63,8 +63,9 @@ const Footer: React.FC = () => {
                 src={IcapitalLogo}
                 alt="iCapital Logo"
                 width={180}
-                height={90}
+                height={180}
                 className="brightness-0 invert object-contain transition-transform hover:scale-105"
+                style={{ width: 180, height: "auto" }}
               />
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-blue-100/60">

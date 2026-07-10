@@ -93,7 +93,7 @@ const Slider: React.FC<SliderProps> = ({ sliderData }) => {
                         fill
                         sizes="(max-width: 768px) 120px, 200px"
                         className="object-contain"
-                        priority={index < 10}
+                        priority={index === 0}
                       />
                     </div>
                   )}

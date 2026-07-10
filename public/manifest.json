@@ -27,8 +27,8 @@
 
   "icons": [
     {
-      "src": "/images/i-logo.png",
-      "sizes": "any",
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
       "type": "image/png",
       "purpose": "any"
     },
@@ -36,7 +36,7 @@
       "src": "/images/i-logo.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any"
     },
     {
       "src": "/images/i-logo.png",

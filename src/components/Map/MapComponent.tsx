@@ -4,16 +4,16 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-// Get the Mapbox token from the environment
-const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+const rawMapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN?.trim() || "";
+const mapboxToken =
+  rawMapboxToken &&
+  !/your_mapbox_token|changeme|placeholder|xxx/i.test(rawMapboxToken)
+    ? rawMapboxToken
+    : "";
 
-if (!mapboxToken) {
-  console.error(
-    "Mapbox token is missing! Please set NEXT_PUBLIC_MAPBOX_TOKEN in your environment variables.",
-  );
+if (mapboxToken) {
+  mapboxgl.accessToken = mapboxToken;
 }
-
-mapboxgl.accessToken = mapboxToken || "";
 
 interface MapLocation {
   lng: number;

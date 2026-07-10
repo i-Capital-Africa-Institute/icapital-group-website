@@ -32,9 +32,9 @@ const Header: FC<HeaderProps> = ({
 
   const navLinks = [
     { name: "Previous Summits", href: "/eafs/previous-summit" },
-    { name: "Upcoming Summits", href: "/upcoming-summits" },
-    { name: "Summit Documents", href: "/summit-documents" },
-    { name: "Photo Gallery", href: "/photo-gallery" },
+    { name: "Upcoming Summits", href: "/eafs/upcoming-summits" },
+    { name: "Summit Documents", href: "/eafs/summit-documents" },
+    { name: "Photo Gallery", href: "/eafs/photo-gallery" },
   ];
 
   useEffect(() => {
@@ -138,7 +138,7 @@ const Header: FC<HeaderProps> = ({
             }}
           >
             <Link
-              href="/"
+              href="/eafs"
               className="transition-opacity duration-300 hover:opacity-80"
             >
               <Image
@@ -201,7 +201,7 @@ const Header: FC<HeaderProps> = ({
               }}
             >
               <Link
-                href="/contact"
+                href="/#contact"
                 className="rounded-full border-2 px-6 py-2 text-sm font-medium transition-all duration-300 hover:bg-white/10"
                 style={{
                   borderColor: buttonBorderColor,
@@ -324,7 +324,7 @@ const Header: FC<HeaderProps> = ({
                   }}
                 >
                   <Link
-                    href="/contact"
+                    href="/#contact"
                     className="w-full rounded-full border-2 px-6 py-2 text-center text-sm font-medium transition-all duration-300 hover:bg-white/10"
                     style={{
                       borderColor: buttonBorderColor,

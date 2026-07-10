@@ -14,7 +14,7 @@ export function middleware(request: NextRequest) {
   // Content Security Policy
   response.headers.set(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' *.frontiertech.org; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob: *.frontiertech.org *.amazonaws.com img.youtube.com; connect-src 'self' *.frontiertech.org wss://icms.frontiertech.org; frame-src 'self' *.youtube.com;"
+    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' *.frontiertech.org; style-src 'self' 'unsafe-inline' fonts.googleapis.com api.mapbox.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: blob: *.frontiertech.org *.amazonaws.com img.youtube.com api.mapbox.com *.mapbox.com; connect-src 'self' *.frontiertech.org wss://icms.frontiertech.org api.mapbox.com *.mapbox.com events.mapbox.com; worker-src 'self' blob:; frame-src 'self' *.youtube.com;"
   )
 
   // Add caching headers based on path
