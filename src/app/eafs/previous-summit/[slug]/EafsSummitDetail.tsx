@@ -34,7 +34,7 @@ const PlatiniumSponsors = dynamic(
 );
 const ExploreOtherSummits = dynamic(
   () => import("@/components/eafs/PreviousSummitDetail/ExploreOtherSummits"),
-  { loading: () => <SectionSkeleton minHeight="min-h-[300px]" /> },
+  { ssr: false, loading: () => <SectionSkeleton minHeight="min-h-[300px]" /> },
 );
 
 interface EafsSummitDetailProps {

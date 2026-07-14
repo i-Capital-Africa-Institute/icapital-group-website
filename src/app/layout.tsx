@@ -90,7 +90,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         <link rel="preconnect" href="https://icapital.s3.us-east-2.amazonaws.com" />
         <link rel="dns-prefetch" href="https://icms.frontiertech.org" />
       </head>
-      <body>
+      <body className="bg-white text-[#061C3D]">
         <Toaster position="top-right" />
         <ApolloClientProvider>{children}</ApolloClientProvider>
       </body>

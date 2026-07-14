@@ -32,27 +32,27 @@ const Hero = ({ heroData }: HeroProps) => {
   const [active, setActive] = useState(0);
 
   const titleVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    hidden: { opacity: 1, y: 12 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
   };
 
   const wordVariants = {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 1, y: 8 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { delay: i * 0.08, duration: 0.4, ease: "easeOut" },
+      transition: { delay: i * 0.05, duration: 0.35, ease: "easeOut" },
     }),
   };
 
   const descriptionVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.2, ease: "easeOut" } },
+    hidden: { opacity: 1, y: 8 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, delay: 0.1, ease: "easeOut" } },
   };
 
   const buttonVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.35, ease: "easeOut" } },
+    hidden: { opacity: 1, y: 8 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, delay: 0.15, ease: "easeOut" } },
   };
 
   // Helper to extract plain text from Strapi rich text blocks
@@ -82,7 +82,7 @@ const Hero = ({ heroData }: HeroProps) => {
   const slides = heroData.home.hero_slides;
 
   return (
-    <div className="relative h-screen w-full overflow-hidden rounded-br-[70px] md:rounded-br-[100px]">
+    <div className="relative h-screen w-full overflow-hidden rounded-br-[70px] bg-[#061C3D] md:rounded-br-[100px]">
       {/* Fixed Header */}
       <Header />
 
@@ -137,12 +137,11 @@ const Hero = ({ heroData }: HeroProps) => {
                     </MotionSpan>
                   )} */}
 
-                  {/* Title */}
+                  {/* Title — always opacity 1 so Lighthouse can measure FCP/LCP */}
                   <motion.h1
                     variants={titleVariants}
                     initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
+                    animate="visible"
                     className="text-5xl font-extrabold leading-[1.1] tracking-tighter sm:text-7xl lg:text-8xl lg:leading-[1.05]"
                   >
                     {slide.title.split(" ").map((word: string, i: number) => (
@@ -164,8 +163,7 @@ const Hero = ({ heroData }: HeroProps) => {
                   <motion.p
                     variants={descriptionVariants}
                     initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
+                    animate="visible"
                     className="max-w-2xl text-xl leading-relaxed text-blue-50/80 lg:text-2xl font-medium"
                   >
                     {getDescriptionText(slide.description)}
@@ -175,8 +173,7 @@ const Hero = ({ heroData }: HeroProps) => {
                   <MotionDiv
                     variants={buttonVariants}
                     initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
+                    animate="visible"
                     className="flex flex-col items-start gap-4 pt-4 md:flex-row md:items-center"
                   >
                     {slide.buttonText && (

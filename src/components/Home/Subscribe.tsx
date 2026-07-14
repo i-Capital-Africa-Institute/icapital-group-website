@@ -11,6 +11,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import ClientOnly from "@/components/ClientOnly";
+import SectionSkeleton from "@/components/ui/SectionSkeleton";
 
 // Helper to highlight words in heading
 function highlightWords(text: string, highlight: string) {
@@ -35,7 +37,7 @@ interface SubscribeProps {
   subscribeData: any;
 }
 
-const Subscribe = ({ subscribeData }: SubscribeProps) => {
+const SubscribeInner = ({ subscribeData }: SubscribeProps) => {
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -404,5 +406,11 @@ const Subscribe = ({ subscribeData }: SubscribeProps) => {
     </section>
   );
 };
+
+const Subscribe = (props: SubscribeProps) => (
+  <ClientOnly fallback={<SectionSkeleton minHeight="min-h-[300px]" />}>
+    <SubscribeInner {...props} />
+  </ClientOnly>
+);
 
 export default Subscribe;

@@ -1,12 +1,23 @@
 "use client";
-import dynamic from "next/dynamic";
-import { ReactNode } from "react";
 
-const ApolloEafsProviderInner = dynamic(
-  () => import("./ApolloEafsProviderInner"),
-  { ssr: false }
-);
+import { ReactNode, useEffect, useState } from "react";
+import ApolloEafsProviderInner from "./ApolloEafsProviderInner";
 
-export default function ApolloEafsProvider({ children }: { children: ReactNode }) {
+/** Same SSR-safe pattern as the main Apollo provider. */
+export default function ApolloEafsProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <>{children}</>;
+  }
+
   return <ApolloEafsProviderInner>{children}</ApolloEafsProviderInner>;
 }

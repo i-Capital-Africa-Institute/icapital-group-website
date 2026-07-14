@@ -1,19 +1,27 @@
 "use client";
-import dynamic from "next/dynamic";
-import { ReactNode } from "react";
 
-// Dynamically import the actual Apollo provider with ssr:false so
-// @apollo/client's useContext call never runs during server-side rendering
-// or static prerendering (which would crash with "null useContext").
-const ApolloProviderInner = dynamic(
-  () => import("./ApolloProviderInner"),
-  { ssr: false }
-);
+import { ReactNode, useEffect, useState } from "react";
+import ApolloProviderInner from "./ApolloProviderInner";
 
+/**
+ * SSR path: render children immediately so the HTML paints (FCP).
+ * Client path: wrap with Apollo after mount — ApolloProvider calls useContext,
+ * which crashes during Next static prerender if run on the server.
+ */
 export default function ApolloClientProvider({
   children,
 }: {
   children: ReactNode;
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <>{children}</>;
+  }
+
   return <ApolloProviderInner>{children}</ApolloProviderInner>;
 }

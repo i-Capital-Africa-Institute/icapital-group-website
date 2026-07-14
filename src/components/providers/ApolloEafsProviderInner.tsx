@@ -5,7 +5,6 @@ import { useMemo, ReactNode } from "react";
 function makeClient() {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_EAFS_API || "http://localhost:1337/graphql",
-    fetchOptions: { timeout: 30000 },
   });
 
   const cache = new InMemoryCache({
@@ -31,6 +30,7 @@ function makeClient() {
   return new ApolloClient({
     link: httpLink,
     cache,
+    ssrMode: typeof window === "undefined",
     queryDeduplication: true,
     defaultOptions: {
       watchQuery: { fetchPolicy: "cache-first", errorPolicy: "all", nextFetchPolicy: "cache-first" },
@@ -40,11 +40,14 @@ function makeClient() {
   });
 }
 
-let clientSingleton: ApolloClient<any> | null = null;
+let browserClient: ApolloClient<any> | null = null;
 
 function getClient() {
-  if (!clientSingleton) clientSingleton = makeClient();
-  return clientSingleton;
+  if (typeof window === "undefined") {
+    return makeClient();
+  }
+  if (!browserClient) browserClient = makeClient();
+  return browserClient;
 }
 
 export default function ApolloEafsProviderInner({ children }: { children: ReactNode }) {

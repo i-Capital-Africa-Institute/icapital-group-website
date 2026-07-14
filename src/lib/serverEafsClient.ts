@@ -1,12 +1,16 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { createTimedFetch } from "./fetchWithTimeout";
+
+const eafsUri =
+  process.env.NEXT_PUBLIC_EAFS_API ||
+  process.env.NEXT_PUBLIC_API ||
+  "http://localhost:1337/graphql";
 
 const eafsHttpLink = createHttpLink({
-  uri:
-    process.env.NEXT_PUBLIC_EAFS_API ||
-    process.env.NEXT_PUBLIC_API ||
-    "http://localhost:1337/graphql",
+  uri: eafsUri,
+  fetch: createTimedFetch(20_000),
   fetchOptions: {
-    next: { revalidate: 3600 },
+    next: { revalidate: 1800 },
   },
 });
 
@@ -31,11 +35,12 @@ export async function executeEafsServerQuery<T>(
       query,
       variables,
       fetchPolicy: "no-cache",
+      errorPolicy: "all",
     });
     return data as T;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("EAFS GraphQL query error:", message);
+    console.warn("EAFS GraphQL query failed:", message, "→", eafsUri);
     return null as T;
   }
 }
