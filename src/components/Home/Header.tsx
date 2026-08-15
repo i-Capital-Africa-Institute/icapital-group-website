@@ -122,15 +122,22 @@ const Header = ({ iconColor = "text-white" }: HeaderProps) => {
         )}
       >
         <div className="flex w-full items-center justify-between">
-          {/* Logo — 500×500 square asset, larger on hero for visibility */}
-          <div className="relative h-16 w-16 flex-shrink-0 sm:h-20 sm:w-20 xl:h-24 xl:w-24">
-            <Link href="/" aria-label="Home">
+          {/* Logo — Large & prominent with correct aspect ratio */}
+          <div
+            className={twMerge(
+              "relative flex-shrink-0 transition-all duration-300",
+              scrolled
+                ? "h-12 w-32 sm:h-14 sm:w-40 xl:h-16 xl:w-48"
+                : "h-16 w-44 sm:h-20 sm:w-56 xl:h-24 xl:w-64"
+            )}
+          >
+            <Link href="/" aria-label="Home" className="relative block h-full w-full">
               <Image
                 src={IcapitalLogo}
                 alt="i-Capital Africa Institute"
                 fill
-                sizes="(max-width: 640px) 64px, (max-width: 1280px) 80px, 96px"
-                style={{ objectFit: "contain" }}
+                sizes="(max-width: 640px) 180px, (max-width: 1280px) 230px, 260px"
+                style={{ objectFit: "contain", objectPosition: "left center" }}
                 className={iconColor === "text-black" ? "" : "brightness-0 invert"}
                 priority
               />
@@ -249,13 +256,13 @@ const Header = ({ iconColor = "text-white" }: HeaderProps) => {
             <div className="relative flex h-full flex-col px-6 py-6 md:px-12">
               {/* Header row */}
               <div className="flex items-center justify-between mb-16">
-                <div className="relative h-16 w-16 sm:h-20 sm:w-20">
+                <div className="relative h-16 w-44 sm:h-20 sm:w-56">
                   <Image
                     src={IcapitalLogo}
                     alt="i-Capital Africa Institute"
                     fill
-                    sizes="64px"
-                    style={{ objectFit: "contain" }}
+                    sizes="(max-width: 640px) 180px, 230px"
+                    style={{ objectFit: "contain", objectPosition: "left center" }}
                     className="brightness-0 invert"
                   />
                 </div>
