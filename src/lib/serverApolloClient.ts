@@ -1,97 +1,83 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { createTimedFetch } from "./fetchWithTimeout";
 
-// Create HTTP link for server-side requests
+const graphqlUri =
+  process.env.NEXT_PUBLIC_API || "http://localhost:1337/graphql";
+
 const httpLink = createHttpLink({
-  uri: process.env.NEXT_PUBLIC_API || "http://localhost:1337/graphql",
+  uri: graphqlUri,
+  // Custom fetch — do not use fetchOptions.timeout (invalid for undici / causes noisy TimeoutError)
+  fetch: createTimedFetch(20_000),
   fetchOptions: {
-    timeout: 30000, // 30 seconds timeout
-    // Add cache control for server requests
-    next: { revalidate: 3600 }, // Revalidate every hour
+    next: { revalidate: 1800 },
   },
 });
 
-// Add any necessary headers for server-side requests
-const authLink = setContext((_, { headers }) => {
-  return {
-    headers: {
-      ...headers,
-      // Add any authentication headers if needed
-      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-    },
-  };
-});
+const authLink = setContext((_, { headers }) => ({
+  headers: {
+    ...headers,
+    "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
+  },
+}));
 
-// Configure cache for server-side with type policies
 const cache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
         portfolios: {
           keyArgs: false,
-          merge(existing = [], incoming) {
+          merge(_existing = [], incoming) {
             return incoming;
           },
         },
         newsArticles: {
           keyArgs: false,
-          merge(existing = [], incoming) {
+          merge(_existing = [], incoming) {
             return incoming;
           },
         },
         events: {
           keyArgs: false,
-          merge(existing = [], incoming) {
+          merge(_existing = [], incoming) {
             return incoming;
           },
         },
       },
     },
-    Portfolio: {
-      keyFields: ["id"],
-    },
-    NewsArticle: {
-      keyFields: ["id"],
-    },
-    Event: {
-      keyFields: ["id"],
-    },
+    Portfolio: { keyFields: ["id"] },
+    NewsArticle: { keyFields: ["id"] },
+    Event: { keyFields: ["id"] },
   },
 });
 
-// Create Apollo Client for server-side use
 export const serverApolloClient = new ApolloClient({
   link: authLink.concat(httpLink),
   cache,
-  ssrMode: true, // Enable SSR mode
+  ssrMode: true,
   defaultOptions: {
     query: {
-      fetchPolicy: "no-cache", // Always fetch fresh data on server
+      fetchPolicy: "no-cache",
       errorPolicy: "all",
     },
   },
 });
 
-// Helper function to execute queries on the server
 export async function executeServerQuery<T>(
-  query: any,
-  variables?: any,
+  query: Parameters<typeof serverApolloClient.query>[0]["query"],
+  variables?: Record<string, unknown>,
 ): Promise<T> {
   try {
     const { data } = await serverApolloClient.query({
       query,
       variables,
       fetchPolicy: "no-cache",
+      errorPolicy: "all",
     });
-    return data;
-  } catch (error: any) {
-    console.error("GraphQL query error:", error?.message ?? error);
-    if (error.graphQLErrors?.length) {
-      console.error("GraphQL Errors:", JSON.stringify(error.graphQLErrors));
-    }
-    if (error.networkError) {
-      console.error("Network Error:", error.networkError?.message ?? error.networkError);
-    }
+    return data as T;
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn("GraphQL query failed:", message, "→", graphqlUri);
     return null as T;
   }
 }

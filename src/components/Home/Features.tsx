@@ -68,15 +68,13 @@ const Features = ({ featuresData }: FeaturesProps) => {
   const itemVariants = {
     hidden: {
       opacity: 0,
-      y: 30,
-      filter: "blur(8px)",
+      y: 24,
     },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: {
-        duration: 0.6,
+        duration: 0.5,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -97,16 +95,16 @@ const Features = ({ featuresData }: FeaturesProps) => {
 
       <div className="container relative z-10 mx-auto px-6 md:px-12">
         <motion.div
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="text-center"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.4 }}
           >
             <Tag
@@ -119,7 +117,7 @@ const Features = ({ featuresData }: FeaturesProps) => {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mt-4 text-3xl font-bold leading-snug text-gray-900 md:text-4xl"
           >
@@ -132,7 +130,7 @@ const Features = ({ featuresData }: FeaturesProps) => {
           initial="hidden"
           animate={controls}
           whileInView="visible"
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-4 md:gap-8"
         >
           {(features || []).map((feature: any, index: number) => (

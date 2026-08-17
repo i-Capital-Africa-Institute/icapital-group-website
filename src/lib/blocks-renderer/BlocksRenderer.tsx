@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -35,8 +36,17 @@ const defaultComponents: ContextValue = {
     list: ({ format, children }: { format: string; children: React.ReactNode }) =>
       format === "ordered" ? <ol>{children}</ol> : <ul>{children}</ul>,
     "list-item": ({ children }) => <li>{children}</li>,
-    image: ({ image }: { image: { url: string; alternativeText?: string } }) => (
-      <img src={image.url} alt={image.alternativeText ?? undefined} />
+    image: ({ image }: { image: { url: string; alternativeText?: string; width?: number; height?: number } }) => (
+      <span className="relative my-6 block w-full overflow-hidden rounded-xl">
+        <Image
+          src={image.url}
+          alt={image.alternativeText ?? "Article image"}
+          width={image.width ?? 800}
+          height={image.height ?? 450}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
+          className="h-auto w-full object-cover"
+        />
+      </span>
     ),
   },
   modifiers: {

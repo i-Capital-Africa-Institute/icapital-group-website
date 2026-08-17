@@ -22,8 +22,8 @@ const GetStarted = ({ getStartedData }: GetStartedProps) => {
       {/* Background with subtle animation */}
       <div className="absolute inset-0 bg-[#061C3D]" />
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-orange-600/20 blur-[120px] animate-pulse" />
-        <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-blue-600/20 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute -left-[10%] -top-[20%] h-[50%] w-[50%] rounded-full bg-orange-600/20 blur-3xl" />
+        <div className="absolute -bottom-[20%] -right-[10%] h-[50%] w-[50%] rounded-full bg-blue-600/20 blur-3xl" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">

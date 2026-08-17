@@ -14,7 +14,6 @@ import OtherProjects from "./OtherProjects";
 import { executeServerQuery } from "@/lib/serverApolloClient";
 import { getStrapiImageUrl } from "@/utils/getStrapiImageUrl";
 
-export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
 
 interface PortfolioDetailProps {

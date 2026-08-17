@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
-import MapComponent from "@/components/Map/MapComponent";
+import LazyMap from "@/components/Map/LazyMap";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -47,8 +47,8 @@ const GetInTouch = () => {
   return (
     <section id="contact" className="relative bg-[#fcfcfd] py-24 lg:py-32 overflow-hidden">
       {/* Decorative Background Elements */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[120px]" />
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[60px] md:blur-[120px]" />
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[60px] md:blur-[120px]" />
 
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
@@ -169,7 +169,7 @@ const GetInTouch = () => {
               viewport={{ once: true }}
               className="relative rounded-[2.5rem] overflow-hidden h-[400px] shadow-2xl group border-4 border-white"
             >
-              <MapComponent className="w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700" />
+              <LazyMap className="grayscale group-hover:grayscale-0 transition-all duration-700" />
               
               <div className="absolute inset-x-4 bottom-4 bg-[#061C3D]/90 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10">
                 <h4 className="text-white font-bold text-lg mb-1">Addis Ababa, Ethiopia</h4>

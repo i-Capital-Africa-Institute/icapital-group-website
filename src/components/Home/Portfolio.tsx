@@ -41,7 +41,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.6 }}
+          viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           <Tag
@@ -53,7 +53,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="mt-4 text-3xl font-extrabold tracking-tight text-[#061C3D] md:text-5xl"
         >
@@ -84,6 +84,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
                         src={getStrapiImageUrl(item.cardImage?.url || "")}
                         alt={item.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-contain transition-transform duration-700 group-hover:scale-110"
                       />
                     </div>

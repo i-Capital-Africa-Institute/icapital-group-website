@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
 import { Mulish, Urbanist, Questrial } from "next/font/google";
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import { ReactNode } from "react";
 import ApolloClientProvider from "@/components/providers/ApolloProvider";
 import { Toaster } from "react-hot-toast";
@@ -26,6 +26,12 @@ const urbanist = Urbanist({
   display: "swap",
   variable: "--font-urbanist",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#061C3D",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${process.env.NEXT_PUBLIC_DOMAIN}`),
@@ -59,30 +65,14 @@ verification: {
 },
 icons: {
   icon: [
-    {
-      url: "/images/i-logo.png",
-      sizes: "32x32",
-      type: "image/png",
-    },
-    {
-      url: "/images/i-logo.png",
-      sizes: "192x192",
-      type: "image/png",
-    },
-    {
-      url: "/images/i-logo.png",
-      sizes: "512x512",
-      type: "image/png",
-    },
+    { url: "/favicon.ico", sizes: "any" },
+    { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+    { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
   ],
-  apple: [
-    {
-      url: "/images/i-logo.png",
-      sizes: "180x180",
-      type: "image/png",
-    },
-  ],
-  shortcut: "/images/i-logo.png",
+  apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  shortcut: "/icons/icon-192.png",
 },
 manifest: "/manifest.json",
 
@@ -100,7 +90,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         <link rel="preconnect" href="https://icapital.s3.us-east-2.amazonaws.com" />
         <link rel="dns-prefetch" href="https://icms.frontiertech.org" />
       </head>
-      <body>
+      <body className="bg-white text-[#061C3D]">
         <Toaster position="top-right" />
         <ApolloClientProvider>{children}</ApolloClientProvider>
       </body>
