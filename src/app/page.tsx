@@ -36,11 +36,11 @@ const HomePage = async () => {
   return (
     <ScrollSpyWrapper sectionIds={sectionIds}>
       <div>
-        <Hero heroData={data.hero} />
         <div id="news">
-          <UpcomingEvents
-            upcomingEventsData={data.upcomingEvents}
+          <Hero
+            heroData={data.hero}
             newsData={data.news}
+            upcomingEventsData={data.upcomingEvents}
           />
         </div>
         <Slider sliderData={data.slider} />

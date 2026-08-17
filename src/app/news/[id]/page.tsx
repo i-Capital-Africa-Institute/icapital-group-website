@@ -12,6 +12,7 @@ import { executeServerQuery } from "@/lib/serverApolloClient";
 import NewsDetailClient from "./NewsDetailClient";
 import { getStrapiImageUrl } from "@/utils/getStrapiImageUrl";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 900;
 
 const getImageUrl = (url?: string) => {
