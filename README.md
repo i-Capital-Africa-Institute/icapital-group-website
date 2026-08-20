@@ -1,5 +1,6 @@
 # i-Capital Africa Group Website
 
+
 Official website for **i-Capital Africa Group**, built with Next.js App Router and backed by GraphQL-powered CMS data.
 
 ![i-Capital Africa Group homepage](./public/image.png)
