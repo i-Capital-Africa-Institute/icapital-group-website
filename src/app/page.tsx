@@ -39,10 +39,10 @@ export const metadata: Metadata = {
 };
 
 const sectionIds = [
+  "news",
   "sectors",
   "about",
   "features",
-  "news",
   "journey",
   "portfolio",
   "contact",
@@ -54,7 +54,13 @@ const HomePage = async () => {
   return (
     <ScrollSpyWrapper sectionIds={sectionIds}>
       <div>
-        <Hero heroData={data.hero} />
+        <div id="news">
+          <Hero
+            heroData={data.hero}
+            newsData={data.news}
+            upcomingEventsData={data.upcomingEvents}
+          />
+        </div>
         <Slider sliderData={data.slider} />
         <div id="sectors">
           <Sectors sectorsData={data.sectors} />
@@ -64,9 +70,6 @@ const HomePage = async () => {
         </div>
         <div id="features">
           <Features featuresData={data.features} />
-        </div>
-        <div id="news">
-          <UpcomingEvents upcomingEventsData={data.upcomingEvents} />
         </div>
         <div id="journey">
           <Journey journeyData={data.journey} />

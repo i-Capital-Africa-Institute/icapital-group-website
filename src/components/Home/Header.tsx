@@ -16,21 +16,13 @@ const Header = ({ iconColor = "text-white" }: HeaderProps) => {
   const [scrolled, setScrolled] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  // Scroll listener — rAF-throttled to avoid layout thrashing
+  // ✅ Fix 1: Scroll listener with proper cleanup
   useEffect(() => {
-    let raf = 0;
     const handleScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        setScrolled(window.scrollY > 20);
-      });
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(raf);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // ✅ Fix 2: Scroll lock with proper unmount cleanup
@@ -123,38 +115,39 @@ const Header = ({ iconColor = "text-white" }: HeaderProps) => {
     <>
       <header
         className={twMerge(
-          "fixed left-0 top-0 z-[100] w-full transition-[background-color,box-shadow] duration-300 pl-0 pr-4 py-2 md:pr-10",
+          "fixed left-0 top-0 z-[100] w-full transition-all duration-500 px-6 py-4 md:px-12",
           scrolled
-            ? "bg-[#061C3D] shadow-lg border-b border-white/5"
-            : "bg-transparent"
+            ? "bg-[#061C3D]/80 backdrop-blur-xl shadow-2xl py-3 border-b border-white/5"
+            : "bg-transparent py-6"
         )}
       >
         <div className="flex w-full items-center justify-between">
-          {/* Logo — scaled to crop asset padding; origin-left removes empty left space */}
-          <Link
-            href="/"
-            aria-label="Home"
-            className="-ml-2 block h-14 w-44 flex-shrink-0 overflow-hidden sm:h-16 sm:w-56 lg:h-[4.5rem] lg:w-64"
+          {/* Logo — Large & prominent with correct aspect ratio */}
+          <div
+            className={twMerge(
+              "relative flex-shrink-0 transition-all duration-300",
+              scrolled
+                ? "h-12 w-32 sm:h-14 sm:w-40 xl:h-16 xl:w-48"
+                : "h-16 w-44 sm:h-20 sm:w-56 xl:h-24 xl:w-64"
+            )}
           >
-            <Image
-              src={IcapitalLogo}
-              alt="i-Capital Africa Institute"
-              width={500}
-              height={500}
-              sizes="(max-width: 640px) 176px, (max-width: 1024px) 224px, 256px"
-              className={twMerge(
-                "h-full w-auto max-w-none scale-[2.4] origin-left object-contain object-left",
-                iconColor === "text-black" ? "" : "brightness-0 invert",
-              )}
-              style={{ width: "auto", height: "100%" }}
-              priority
-            />
-          </Link>
- {/* Desktop Nav — shows at lg+ (1024px) for tablet landscape and up */}
+            <Link href="/" aria-label="Home" className="relative block h-full w-full">
+              <Image
+                src={IcapitalLogo}
+                alt="i-Capital Africa Institute"
+                fill
+                sizes="(max-width: 640px) 180px, (max-width: 1280px) 230px, 260px"
+                style={{ objectFit: "contain", objectPosition: "left center" }}
+                className={iconColor === "text-black" ? "" : "brightness-0 invert"}
+                priority
+              />
+            </Link>
+          </div>
+ {/* ✅ Fix 5: Desktop Nav — only shows on xl+ to prevent tablet cramping */}
           <nav
             className={twMerge(
-              "hidden flex-1 items-center justify-center space-x-5 lg:space-x-7 xl:space-x-10",
-              "text-sm font-bold tracking-tight lg:flex lg:text-[15px] transition-colors duration-300",
+              "hidden flex-1 items-center justify-center space-x-10",
+              "text-[15px] font-bold tracking-tight xl:flex transition-colors duration-300",
               iconColor
             )}
           >
@@ -177,8 +170,8 @@ const Header = ({ iconColor = "text-white" }: HeaderProps) => {
             ))}
           </nav>
 
-          {/* Contact button — shows at lg+ */}
-          <div className="hidden flex-shrink-0 items-center justify-end lg:flex">
+          {/* ✅ Fix 6: Contact button — only shows on xl+ */}
+          <div className="hidden flex-shrink-0 items-center justify-end xl:flex">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -199,9 +192,9 @@ const Header = ({ iconColor = "text-white" }: HeaderProps) => {
             </motion.div>
           </div>
 
-          {/* Burger button — tablet and mobile (below lg) */}
+          {/* ✅ Fix 7: Burger button shows on both tablet AND mobile (below xl) */}
           <button
-            className="ml-auto p-3 text-white hover:bg-white/10 rounded-xl transition-all duration-300 hover:scale-105 lg:hidden"
+            className="ml-auto p-3 text-white hover:bg-white/10 rounded-xl transition-all duration-300 hover:scale-105 xl:hidden"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
             aria-expanded={menuOpen}
@@ -239,7 +232,7 @@ const Header = ({ iconColor = "text-white" }: HeaderProps) => {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="fixed inset-0 z-[999] flex flex-col lg:hidden"
+            className="fixed inset-0 z-[999] flex flex-col xl:hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
@@ -263,15 +256,14 @@ const Header = ({ iconColor = "text-white" }: HeaderProps) => {
             <div className="relative flex h-full flex-col px-6 py-6 md:px-12">
               {/* Header row */}
               <div className="flex items-center justify-between mb-16">
-                <div className="block h-14 w-44 overflow-hidden sm:h-16 sm:w-56">
+                <div className="relative h-16 w-44 sm:h-20 sm:w-56">
                   <Image
                     src={IcapitalLogo}
                     alt="i-Capital Africa Institute"
-                    width={500}
-                    height={500}
-                    sizes="224px"
-                    className="h-full w-auto max-w-none scale-[2.4] origin-left object-contain object-left brightness-0 invert"
-                    style={{ width: "auto", height: "100%" }}
+                    fill
+                    sizes="(max-width: 640px) 180px, 230px"
+                    style={{ objectFit: "contain", objectPosition: "left center" }}
+                    className="brightness-0 invert"
                   />
                 </div>
 
