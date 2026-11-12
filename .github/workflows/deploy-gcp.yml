@@ -1,0 +1,237 @@
+name: Deploy to GCP Cloud Run
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-gcp-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SERVICE_NAME: icapital-website
+
+jobs:
+  deploy:
+    name: Build & deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      WIF_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      WIF_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Resolve GCP settings
+        id: settings
+        env:
+          GCP_PROJECT_ID_VAR: ${{ vars.GCP_PROJECT_ID }}
+          GCP_PROJECT_ID_SECRET: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_REGION_VAR: ${{ vars.GCP_REGION }}
+          GCP_ARTIFACT_REPO_VAR: ${{ vars.GCP_ARTIFACT_REPO }}
+          NEXT_PUBLIC_DOMAIN_VAR: ${{ vars.NEXT_PUBLIC_DOMAIN }}
+          NEXT_PUBLIC_API_VAR: ${{ vars.NEXT_PUBLIC_API }}
+          NEXT_PUBLIC_DATA_VAR: ${{ vars.NEXT_PUBLIC_DATA }}
+          NEXT_PUBLIC_SOCKET_VAR: ${{ vars.NEXT_PUBLIC_SOCKET }}
+          NEXT_PUBLIC_EAFS_API_VAR: ${{ vars.NEXT_PUBLIC_EAFS_API }}
+          NEXT_PUBLIC_MAPBOX_TOKEN_VAR: ${{ vars.NEXT_PUBLIC_MAPBOX_TOKEN }}
+          NEXT_PUBLIC_CONTACT_EMAIL_VAR: ${{ vars.NEXT_PUBLIC_CONTACT_EMAIL }}
+          NEXT_PUBLIC_MAPBOX_TOKEN_SECRET: ${{ secrets.NEXT_PUBLIC_MAPBOX_TOKEN }}
+        run: |
+          PROJECT_ID="${GCP_PROJECT_ID_VAR:-$GCP_PROJECT_ID_SECRET}"
+          REGION="${GCP_REGION_VAR:-us-central1}"
+          REPOSITORY="${GCP_ARTIFACT_REPO_VAR:-icapital-website}"
+
+          DOMAIN="${NEXT_PUBLIC_DOMAIN_VAR:-icapitalafrica.org}"
+          API="${NEXT_PUBLIC_API_VAR:-https://icms.frontiertech.org/graphql}"
+          DATA="${NEXT_PUBLIC_DATA_VAR:-https://icms.frontiertech.org}"
+          SOCKET="${NEXT_PUBLIC_SOCKET_VAR:-wss://icms.frontiertech.org/graphql}"
+          EAFS_API="${NEXT_PUBLIC_EAFS_API_VAR:-}"
+          MAPBOX="${NEXT_PUBLIC_MAPBOX_TOKEN_VAR:-$NEXT_PUBLIC_MAPBOX_TOKEN_SECRET}"
+          CONTACT_EMAIL_PUBLIC="${NEXT_PUBLIC_CONTACT_EMAIL_VAR:-info@icapitalafrica.org}"
+
+          if [ -z "$PROJECT_ID" ]; then
+            echo "::error::Set repository variable or secret GCP_PROJECT_ID"
+            exit 1
+          fi
+
+          if [ -z "$WIF_PROVIDER" ] && [ -z "$GCP_SA_KEY" ]; then
+            echo "::error::Set either GCP_WORKLOAD_IDENTITY_PROVIDER + GCP_SERVICE_ACCOUNT, or GCP_SA_KEY"
+            exit 1
+          fi
+
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE_NAME}:${GITHUB_SHA}"
+          IMAGE_LATEST="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE_NAME}:latest"
+
+          {
+            echo "project_id=${PROJECT_ID}"
+            echo "region=${REGION}"
+            echo "repository=${REPOSITORY}"
+            echo "image=${IMAGE}"
+            echo "image_latest=${IMAGE_LATEST}"
+            echo "domain=${DOMAIN}"
+            echo "api=${API}"
+            echo "data=${DATA}"
+            echo "socket=${SOCKET}"
+            echo "eafs_api=${EAFS_API}"
+            echo "mapbox=${MAPBOX}"
+            echo "contact_email_public=${CONTACT_EMAIL_PUBLIC}"
+            echo "use_wif=$([ -n "$WIF_PROVIDER" ] && echo true || echo false)"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Project=${PROJECT_ID} Region=${REGION} Image=${IMAGE}"
+
+      - name: Authenticate to Google Cloud (Workload Identity)
+        if: ${{ env.WIF_PROVIDER != '' }}
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.WIF_SERVICE_ACCOUNT }}
+
+      - name: Authenticate to Google Cloud (Service Account Key)
+        if: ${{ env.WIF_PROVIDER == '' }}
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ env.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker \
+            "${{ steps.settings.outputs.region }}-docker.pkg.dev" \
+            --quiet
+
+      - name: Ensure Artifact Registry repository exists
+        run: |
+          REGION="${{ steps.settings.outputs.region }}"
+          REPOSITORY="${{ steps.settings.outputs.repository }}"
+          PROJECT_ID="${{ steps.settings.outputs.project_id }}"
+
+          if ! gcloud artifacts repositories describe "${REPOSITORY}" \
+            --location="${REGION}" \
+            --project="${PROJECT_ID}" >/dev/null 2>&1; then
+            gcloud artifacts repositories create "${REPOSITORY}" \
+              --repository-format=docker \
+              --location="${REGION}" \
+              --project="${PROJECT_ID}" \
+              --description="iCapital website container images"
+          fi
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg "NEXT_PUBLIC_DOMAIN=${{ steps.settings.outputs.domain }}" \
+            --build-arg "NEXT_PUBLIC_API=${{ steps.settings.outputs.api }}" \
+            --build-arg "NEXT_PUBLIC_DATA=${{ steps.settings.outputs.data }}" \
+            --build-arg "NEXT_PUBLIC_SOCKET=${{ steps.settings.outputs.socket }}" \
+            --build-arg "NEXT_PUBLIC_EAFS_API=${{ steps.settings.outputs.eafs_api }}" \
+            --build-arg "NEXT_PUBLIC_MAPBOX_TOKEN=${{ steps.settings.outputs.mapbox }}" \
+            --build-arg "NEXT_PUBLIC_CONTACT_EMAIL=${{ steps.settings.outputs.contact_email_public }}" \
+            --tag "${{ steps.settings.outputs.image }}" \
+            --tag "${{ steps.settings.outputs.image_latest }}" \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push "${{ steps.settings.outputs.image }}"
+          docker push "${{ steps.settings.outputs.image_latest }}"
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        env:
+          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+          CONTACT_FROM_EMAIL: ${{ secrets.CONTACT_FROM_EMAIL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          CONTACT_EMAIL="${CONTACT_EMAIL:-info@icapitalafrica.org}"
+          CONTACT_FROM_EMAIL="${CONTACT_FROM_EMAIL:-contact@icapitalafrica.org}"
+
+          ENV_VARS="NODE_ENV=production,CONTACT_EMAIL=${CONTACT_EMAIL},CONTACT_FROM_EMAIL=${CONTACT_FROM_EMAIL}"
+          if [ -n "${RESEND_API_KEY}" ]; then
+            ENV_VARS="${ENV_VARS},RESEND_API_KEY=${RESEND_API_KEY}"
+          fi
+
+          gcloud run deploy "${SERVICE_NAME}" \
+            --image="${{ steps.settings.outputs.image }}" \
+            --region="${{ steps.settings.outputs.region }}" \
+            --project="${{ steps.settings.outputs.project_id }}" \
+            --allow-unauthenticated \
+            --port=8080 \
+            --cpu=1 \
+            --memory=1Gi \
+            --min-instances=0 \
+            --max-instances=10 \
+            --timeout=300 \
+            --set-env-vars="${ENV_VARS}"
+
+          URL="$(gcloud run services describe "${SERVICE_NAME}" \
+            --region="${{ steps.settings.outputs.region }}" \
+            --project="${{ steps.settings.outputs.project_id }}" \
+            --format='value(status.url)')"
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+          echo "Deployed to ${URL}"
+
+      - name: Keep only latest and previous images
+        if: success()
+        continue-on-error: true
+        env:
+          PROJECT_ID: ${{ steps.settings.outputs.project_id }}
+          REGION: ${{ steps.settings.outputs.region }}
+          REPOSITORY: ${{ steps.settings.outputs.repository }}
+          KEEP_COUNT: "2"
+        run: |
+          IMAGE_PATH="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE_NAME}"
+
+          mapfile -t DIGESTS < <(
+            gcloud artifacts docker images list "${IMAGE_PATH}" \
+              --project="${PROJECT_ID}" \
+              --include-tags \
+              --sort-by=~CREATE_TIME \
+              --format='value(version)' \
+            | awk 'NF && !seen[$0]++'
+          )
+
+          TOTAL="${#DIGESTS[@]}"
+          echo "Found ${TOTAL} image digest(s) for ${IMAGE_PATH}"
+
+          if [ "${TOTAL}" -le "${KEEP_COUNT}" ]; then
+            echo "Nothing to delete (keeping up to ${KEEP_COUNT})."
+            exit 0
+          fi
+
+          echo "Keeping newest ${KEEP_COUNT} digest(s); deleting the rest..."
+          for ((i=KEEP_COUNT; i<TOTAL; i++)); do
+            DIGEST="${DIGESTS[$i]}"
+            echo "Deleting ${IMAGE_PATH}@${DIGEST}"
+            gcloud artifacts docker images delete \
+              "${IMAGE_PATH}@${DIGEST}" \
+              --project="${PROJECT_ID}" \
+              --delete-tags \
+              --quiet
+          done
+
+      - name: Summary
+        if: success()
+        run: |
+          {
+            echo "### Deployed icapital-website"
+            echo ""
+            echo "- **Image:** \`${{ steps.settings.outputs.image }}\`"
+            echo "- **URL:** ${{ steps.deploy.outputs.url }}"
+            echo "- **Region:** ${{ steps.settings.outputs.region }}"
+            echo "- **Domain (build-time):** \`${{ steps.settings.outputs.domain }}\`"
+            echo "- **CMS API:** \`${{ steps.settings.outputs.api }}\`"
+            echo "- **Registry cleanup:** kept latest + previous image only"
+            echo ""
+            echo "Point \`www.icapitalafrica.org\` / apex DNS to this Cloud Run service when ready, then remove the Vercel project."
+          } >> "$GITHUB_STEP_SUMMARY"

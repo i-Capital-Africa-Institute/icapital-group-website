@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Required for the Cloud Run / Docker standalone image.
+  output: 'standalone',
+
   // Optimize server components
   serverExternalPackages: ['@apollo/client'],
 

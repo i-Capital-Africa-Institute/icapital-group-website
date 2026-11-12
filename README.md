@@ -71,9 +71,35 @@ src/
 └── emails/      # React Email templates
 ```
 
-## Deployment
+## Deployment (GCP Cloud Run)
 
-The project is ready for standard Node.js hosting platforms that support Next.js. Build with `pnpm build` and run with `pnpm start` in production.
+Production deploys to **GCP Cloud Run** via `.github/workflows/deploy-gcp.yml` on push to `master` / `main`.
+
+Required GitHub configuration (same pattern as Master Builder):
+
+| Type | Name | Example |
+|------|------|---------|
+| Variable | `GCP_PROJECT_ID` | `shofer-393807` |
+| Variable | `GCP_REGION` | `us-central1` |
+| Variable | `GCP_ARTIFACT_REPO` | `icapital-website` |
+| Variable | `NEXT_PUBLIC_DOMAIN` | `icapitalafrica.org` |
+| Variable | `NEXT_PUBLIC_API` | `https://icms.frontiertech.org/graphql` |
+| Variable | `NEXT_PUBLIC_DATA` | `https://icms.frontiertech.org` |
+| Variable | `NEXT_PUBLIC_SOCKET` | `wss://icms.frontiertech.org/graphql` |
+| Secret | `GCP_SA_KEY` | JSON key for `github-deploy@…` |
+| Secret | `RESEND_API_KEY` | Resend API key (contact form) |
+| Secret | `CONTACT_EMAIL` | `info@icapitalafrica.org` |
+
+Local Docker build:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_DOMAIN=icapitalafrica.org \
+  --build-arg NEXT_PUBLIC_API=https://icms.frontiertech.org/graphql \
+  --build-arg NEXT_PUBLIC_DATA=https://icms.frontiertech.org \
+  --build-arg NEXT_PUBLIC_SOCKET=wss://icms.frontiertech.org/graphql \
+  -t icapital-website .
+```
 
 ## Notes
 
